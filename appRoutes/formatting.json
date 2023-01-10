@@ -1,0 +1,33 @@
+[{
+    "frsitName":"f",
+    "lastName":"l",
+    "email":"e@pl.com",
+},
+{
+    "frsitName":"f",
+    "lastName":"l",
+    "email":"e@pl.com",
+},
+{
+    "frsitName":"f",
+    "lastName":"l",
+    "email":"e@pl.com",
+}
+,{
+    "frsitName":"f",
+    "lastName":"l",
+    "email":"e@pl.com",
+}
+
+]
+
+
+
+{
+    user: null | Object,
+    allResults: [users],
+    isRegistered: boolean 
+}
+
+[]
+{}

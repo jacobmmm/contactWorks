@@ -42,12 +42,6 @@ router.post('/register', async(req,res) => {
         email: req.body.email
     }
 
-    /*const userContacts = {
-        firstName: req.body.contacts.firstName,
-        lastName: req.body.contacts.lastName,
-        phoneNumber: req.body.contacts.phoneNumber,
-        email: req.body.contacts.email
-    }*/
     const userContacts = req.body.contacts
     
     const gUser = await createGlobalUser(userData, regstUser.regId)
@@ -139,8 +133,6 @@ router.get('/searchName/:name',auth, async(req, res) => {
     const usersFName = await User.findAll({ attributes:['firstName','lastName','phoneNumber','spam'], where: { firstName: searchName  } })
     const usersLName = await User.findAll({ attributes:['firstName','lastName','phoneNumber','spam'], where: { lastName: { [Op.like]:`%${searchName}%` }  } })
     const users = await Promise.all([usersFName,usersLName])
-    //users.push(usersFName)
-    //users.push(usersLName)
     const cUsers=combineUsers(users)
     res.send(cUsers)
 
@@ -160,11 +152,10 @@ router.get('/searchPhoneNo/:phNum',auth, async(req, res) => {
         const loginUser = await User.findOne({where: {  regId:logUserRegId, phoneNumber:logUserNumber, contactOf:registrPerson.regId }})
 
         if(loginUser){ 
-            //return res.send(_.pick(registrPerson,['firstName','lastName','phoneNumber','spam','email'])) 
             res.send({user:(_.pick(registrPerson,['firstName','lastName','phoneNumber','spam','email'])),allUsers:[],isRegistered:true})
         }
 
-        else{ //return res.send(_.pick(registrPerson,['firstName','lastName','phoneNumber','spam']))
+        else{
         
             res.send({user:(_.pick(registrPerson,['firstName','lastName','phoneNumber','spam'])),allUsers:[],isRegistered:true})
             
@@ -173,7 +164,6 @@ router.get('/searchPhoneNo/:phNum',auth, async(req, res) => {
     
     else {
         const users = await User.findAll({ attributes:['firstName','lastName','phoneNumber','spam'],  where: { phoneNumber:phNum  } })
-        //res.send(users)
         res.send({user:{},allUsers:users,isRegistered:false})
     }
 
@@ -193,18 +183,14 @@ router.get('/click', auth, async(req,res) => {
     if(user) return res.send(_.pick(registrPerson,['firstName','lastName','phoneNumber','spam','email']))
 
     else return res.send(_.pick(registrPerson,['firstName','lastName','phoneNumber','spam']))
-}
-   
-   //const personEmail = await User.findOne({ where: { firstName:firstName, lastName:lastName, phoneNumber:phoneNumber, regId:{ [Op.not]: null  }, contactOf: userRegId }} )
-
-   //if(personEmail) return res.send(_.pick(personEmail,['firstName','lastName','phoneNumber','spam','email']))
+    }
    
    else {
     const person = await User.findOne({ where: { firstName:firstName, lastName:lastName, phoneNumber:phoneNumber } })
     return res.send(_.pick(person,['firstName','lastName','phoneNumber','spam']))
    } 
 
-} )
+   } )
 
 const createGlobalUser = async function(userData,userId){
     
@@ -245,23 +231,10 @@ const createGlobalUser = async function(userData,userId){
 
 const createContactUser = async function(userContacts,userId){
 
-    /*let contactFirstNames = userContacts.firstName
-    let contactLastNames = userContacts.lastName
-    let contactNumbers = userContacts.phoneNumber
-    let contactEmail = userContacts.email*/
-
     const cUsers = []
-
     let contactLength = userContacts.length;
-
-    /*console.log("contactLength",contactLength)
-    console.log('Users contacts: ')
-    console.log('fLastName: ',contactLastNames)
-    console.log('Numbers: ',contactNumbers)
-    console.log('Email: ',contactEmail)*/
-
     let i = 0;
-
+    
     while(i<contactLength){
 
     const regstUser = await User.findOne({ where: { phoneNumber:userContacts[i].phoneNumber, regId:{ [Op.not]: null }  } })
@@ -282,7 +255,6 @@ const createContactUser = async function(userContacts,userId){
         cUsers.push(user)
 
     }
-    
     
     else{
     const user = {
@@ -309,23 +281,8 @@ const createContactUser = async function(userContacts,userId){
   const combineUsers = function(users){
     const cUsers = []
     const length = users.length
-    //console.log(length)
     const combined = [...users[0], ...users[1]]
-    for (i in users){
-        //console.log(users[i],'\n')
-        for(j in users[i]){
-            console.log(`${i}th set user ${j}\n`,users[i][j])
-            cUsers.push(users[i][j])
-        }
-    }
-
-    /*for(i=0;i<users.length;i++)
-    {
-        const user = users[i].slice(0,users[i].length)
-        cUsers.push(user)
-    }*/
-
     return combined;
-  }
+}
 
 module.exports = router
